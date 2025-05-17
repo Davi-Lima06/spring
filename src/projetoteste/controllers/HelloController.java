@@ -1,26 +1,40 @@
 package projetoteste.controllers;
 
+import framework.anotations.field.Autowired;
+import framework.anotations.method.DeleteMapping;
 import framework.anotations.method.PostMapping;
 import framework.anotations.method.PutMapping;
 import framework.anotations.type.Controller;
 import framework.anotations.method.GetMapping;
 import projetoteste.dto.CadastroDTO;
+import projetoteste.entity.Usuario;
+import projetoteste.services.MinhaService;
+
+import java.util.List;
 
 @Controller
 public class HelloController {
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Olá do seu próprio framework!";
+    @Autowired
+    MinhaService minhaService;
+
+    @GetMapping("/list")
+    public List<String> findAll() {
+        return minhaService.listAll();
     }
 
-    @PostMapping("/enviar")
-    public String cadastrar(String nome) {
-        return "Seu nome é " + nome.replace("{", "").replace("}", "").replace("\"", "");
+    @PostMapping("/persist")
+    public String persist(String nome) {
+        return minhaService.persist(nome);
     }
 
     @PutMapping("/put")
     public String att(String nome) {
         return "Seu nome é " + nome.replace("{", "").replace("}", "").replace("\"", "");
+    }
+
+    @DeleteMapping("/delete")
+    public String delete(String nome) {
+        return minhaService.doSomething(nome);
     }
 }

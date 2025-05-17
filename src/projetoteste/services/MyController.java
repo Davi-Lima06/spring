@@ -10,6 +10,6 @@ public class MyController {
     MinhaService service;
 
     public void handleRequest() {
-        service.doSomething();
+      //  service.doSomething();
     }
 }

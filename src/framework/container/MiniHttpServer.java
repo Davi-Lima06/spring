@@ -2,6 +2,7 @@ package framework.container;
 
 import com.sun.net.httpserver.HttpServer;
 import framework.anotations.type.Controller;
+import framework.rotas.DeleteHandler;
 import framework.rotas.GetHandler;
 import framework.rotas.PostHandler;
 import framework.rotas.PutHandler;
@@ -30,6 +31,7 @@ public class MiniHttpServer {
                 Map<String, Method> gets = context.getRouteMappings(bean);
                 Map<String, Method> posts = context.getPostMappings(bean);
                 Map<String, Method> puts = context.getPutMappings(bean);
+                Map<String, Method> deletes = context.getDeleteMappings(bean);
 
                 for (Map.Entry<String, Method> entry : gets.entrySet()) {
                     String path = entry.getKey();
@@ -56,6 +58,15 @@ public class MiniHttpServer {
                     server.createContext(path, new PutHandler(method, bean));
 
                     System.out.println("Route mapped: [PUT] " + path + " -> " + method.getName());
+                }
+
+                for (Map.Entry<String, Method> entry : deletes.entrySet()) {
+                    String path = entry.getKey();
+                    Method method = entry.getValue();
+
+                    server.createContext(path, new DeleteHandler(method, bean));
+
+                    System.out.println("Route mapped: [DELETE] " + path + " -> " + method.getName());
                 }
             }
         }

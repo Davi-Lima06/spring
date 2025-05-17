@@ -1,17 +1,21 @@
 package framework.container;
 
 import framework.anotations.field.Autowired;
+import framework.anotations.method.DeleteMapping;
 import framework.anotations.method.GetMapping;
 import framework.anotations.method.PostMapping;
 import framework.anotations.method.PutMapping;
 import framework.anotations.type.Component;
 import framework.anotations.type.Controller;
 import framework.anotations.type.Service;
+import jpa.metadata.DataBase;
+import jpa.metadata.TableCreator;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.*;
 
 public class ApplicationContext {
@@ -20,11 +24,25 @@ public class ApplicationContext {
     public ApplicationContext(String basePackage) {
         try {
             List<Class<?>> classes = scanPackage(basePackage);
+            createTables(classes);
             instatiateComponents(classes);
             injectDependencies();
+            System.out.println("TUDO CRIADO");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Map<String, Method> getDeleteMappings(Object controllerIntance) {
+        Map<String, Method> routes = new HashMap<>();
+        for (Method method : controllerIntance.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(DeleteMapping.class)) {
+                String path = method.getAnnotation(DeleteMapping.class).value();
+                routes.put(path, method);
+            }
+        }
+
+        return routes;
     }
 
     public Map<String, Method> getRouteMappings(Object controllerInstance) {
@@ -113,6 +131,13 @@ public class ApplicationContext {
         }
     }
 
+    private void createTables(List<Class<?>> models) {
+        Connection connection = DataBase.getConnection();
+        for (Class<?> model : models ) {
+            TableCreator.createTable(model, connection);
+        }
+    }
+
     public <T> T getBean(Class<T> clazz) {
         return clazz.cast(beans.get(clazz));
     }
@@ -120,6 +145,4 @@ public class ApplicationContext {
     public Collection<Object> getBeans() {
         return beans.values();
     }
-
-
 }
