@@ -1,11 +1,10 @@
 package projetoteste.repository;
 
+import jpa.anotations.Repository;
 import jpa.metadata.SimpleEntityManager;
+import projetoteste.entity.Usuario;
 
-import java.sql.Connection;
+@Repository
+public class UsuarioRepository extends SimpleEntityManager<Usuario> {
 
-public class UsuarioRepository extends SimpleEntityManager {
-    public UsuarioRepository(Connection connection) {
-        super(connection);
-    }
 }

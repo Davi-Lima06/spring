@@ -1,6 +1,7 @@
 package jpa.metadata;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,23 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleEntityManager {
+public class SimpleEntityManager<T> implements RepositoryBase<T>{
 
-    private Connection connection;
+    private final Class<T> entity = getEntityType();
 
-    public SimpleEntityManager(Connection connection) {
-        this.connection = connection;
-    }
-
-    public <T> void persist(T entity) {
+    public void persist(T entityModel) {
         try {
-            EntityMetadata meta = new EntityMetadata(entity.getClass());
+            EntityMetadata meta = new EntityMetadata(entityModel.getClass());
             String sql = meta.getInsertSQL();
             PreparedStatement stmt = connection.prepareStatement(sql);
 
             int index = 1;
             for (Field field : meta.getColumns().values()) {
-                stmt.setObject(index++, field.get(entity));
+                stmt.setObject(index++, field.get(entityModel));
             }
 
             stmt.executeUpdate();
@@ -34,7 +31,7 @@ public class SimpleEntityManager {
         }
     }
 
-    public <T> List<T> listAll(Class<T> entity) {
+    public List<T> listAll() {
 
         List<T> results = new ArrayList<>();
         try {
@@ -65,5 +62,10 @@ public class SimpleEntityManager {
         }
 
         return results;
+    }
+
+    public Class<T> getEntityType() {
+        ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+        return (Class<T>) type.getActualTypeArguments()[0];
     }
 }

@@ -1,8 +1,7 @@
 package projetoteste.services;
 
+import framework.anotations.field.Autowired;
 import framework.anotations.type.Service;
-import jpa.metadata.DataBase;
-import projetoteste.dto.CadastroDTO;
 import projetoteste.entity.Usuario;
 import projetoteste.repository.UsuarioRepository;
 
@@ -12,7 +11,8 @@ import java.util.List;
 @Service
 public class MinhaService {
 
-    UsuarioRepository usuarioRepository = new UsuarioRepository(DataBase.getConnection());
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     public String persist(String nome) {
         Usuario usuario = new Usuario(1L, nome);
@@ -24,7 +24,7 @@ public class MinhaService {
 
         List<String> listNames = new ArrayList<>();
 
-        for (Usuario usuario : usuarioRepository.listAll(Usuario.class)) {
+        for (Usuario usuario : usuarioRepository.listAll()) {
             listNames.add(usuario.getNome());
         }
 

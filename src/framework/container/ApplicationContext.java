@@ -8,10 +8,13 @@ import framework.anotations.method.PutMapping;
 import framework.anotations.type.Component;
 import framework.anotations.type.Controller;
 import framework.anotations.type.Service;
+import jpa.anotations.Repository;
 import jpa.metadata.DataBase;
+import jpa.metadata.SimpleEntityManager;
 import jpa.metadata.TableCreator;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -112,7 +115,8 @@ public class ApplicationContext {
 
     private void instatiateComponents(List<Class<?>> classes) throws Exception {
         for (Class<?> clazz : classes) {
-            if (clazz.isAnnotationPresent(Component.class) || clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Controller.class)) {
+            if (clazz.isAnnotationPresent(Component.class) || clazz.isAnnotationPresent(Service.class) || clazz.isAnnotationPresent(Controller.class)
+            || clazz.isAnnotationPresent(Repository.class)) {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
                 beans.put(clazz, instance);
             }
