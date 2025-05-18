@@ -23,9 +23,7 @@ public class PostHandler implements HttpHandler {
             exchange.sendResponseHeaders(405, -1);
             return;
         }
-
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
-
         Object result = null;
         try {
             if (method.getParameterCount() == 1 &&
@@ -38,12 +36,10 @@ public class PostHandler implements HttpHandler {
             exchange.sendResponseHeaders(500, -1);
             return;
         }
-
         byte[] response = result.toString().getBytes();
         exchange.sendResponseHeaders(200, response.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(response);
         }
     }
-
 }

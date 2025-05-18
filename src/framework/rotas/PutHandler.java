@@ -23,9 +23,7 @@ public class PutHandler implements HttpHandler {
         if (!"PUT".equals(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(405, -1);
         }
-
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
-
         Object result = null;
         try {
             if (method.getParameterCount() == 1 && method.getParameterTypes()[0].equals(String.class)) {
@@ -37,7 +35,6 @@ public class PutHandler implements HttpHandler {
             exchange.sendResponseHeaders(500, -1);
             return;
         }
-
         byte[] response = result.toString().getBytes();
         exchange.sendResponseHeaders(200, response.length);
         try (OutputStream os = exchange.getResponseBody()) {

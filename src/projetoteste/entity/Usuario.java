@@ -8,6 +8,7 @@ import jpa.anotations.Id;
 public class Usuario {
 
     @Id
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "nome")
@@ -16,6 +17,13 @@ public class Usuario {
     public Usuario(Long id, String nome) {
         this.id = id;
         this.nome = nome;
+    }
+
+    public String toStringReturn() {
+        return "Usuario{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                '}';
     }
 
     public Usuario( ){

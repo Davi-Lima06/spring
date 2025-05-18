@@ -4,6 +4,7 @@ import framework.anotations.field.Autowired;
 import framework.anotations.method.DeleteMapping;
 import framework.anotations.method.PostMapping;
 import framework.anotations.method.PutMapping;
+import framework.anotations.parameter.RequestParam;
 import framework.anotations.type.Controller;
 import framework.anotations.method.GetMapping;
 import projetoteste.dto.CadastroDTO;
@@ -26,6 +27,11 @@ public class HelloController {
     @PostMapping("/persist")
     public String persist(String nome) {
         return minhaService.persist(nome);
+    }
+
+    @GetMapping("/id")
+    public String findById(@RequestParam("id") Long id) {
+        return minhaService.findById(id);
     }
 
     @PutMapping("/put")

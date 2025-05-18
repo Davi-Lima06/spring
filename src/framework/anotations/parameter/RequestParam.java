@@ -1,4 +1,4 @@
-package jpa.anotations;
+package framework.anotations.parameter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Id {
-    String name() default "";
-    String type() default "NUMERIC(8)";
+@Target(ElementType.PARAMETER)
+public @interface RequestParam {
+    String value();
 }

@@ -13,15 +13,11 @@ import java.util.List;
 public class TableCreator {
     public static void createTable(Class<?> clazz, Connection conn) {
         if (!clazz.isAnnotationPresent(Entity.class)) return;
-
         Entity entity = clazz.getAnnotation(Entity.class);
         String tableName = entity.name().isEmpty() ? clazz.getSimpleName().toLowerCase() : entity.name();
-
         StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");
-
         Field[] fields = clazz.getDeclaredFields();
         List<String> columns = new ArrayList<>();
-
         for (Field field : fields) {
             if (field.isAnnotationPresent(Column.class)) {
                 Column column = field.getAnnotation(Column.class);
@@ -29,10 +25,8 @@ public class TableCreator {
                 columns.add(colName + " " + column.type());
             }
         }
-
         sb.append(String.join(", ", columns));
         sb.append(");");
-
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(sb.toString());
             System.out.println("Tabela criada: " + tableName);

@@ -36,36 +36,28 @@ public class MiniHttpServer {
                 for (Map.Entry<String, Method> entry : gets.entrySet()) {
                     String path = entry.getKey();
                     Method method = entry.getValue();
-
                     server.createContext(path, new GetHandler(method, bean));
-
                     System.out.println("Route mapped: [GET] " + path + " -> " + method.getName());
                 }
 
                 for (Map.Entry<String, Method> entry : posts.entrySet()) {
                     String path = entry.getKey();
                     Method method = entry.getValue();
-
                     server.createContext(path, new PostHandler(method, bean));
-
                     System.out.println("Route mapped: [POST] " + path + " -> " + method.getName());
                 }
 
                 for (Map.Entry<String, Method> entry : puts.entrySet()) {
                     String path = entry.getKey();
                     Method method = entry.getValue();
-
                     server.createContext(path, new PutHandler(method, bean));
-
                     System.out.println("Route mapped: [PUT] " + path + " -> " + method.getName());
                 }
 
                 for (Map.Entry<String, Method> entry : deletes.entrySet()) {
                     String path = entry.getKey();
                     Method method = entry.getValue();
-
                     server.createContext(path, new DeleteHandler(method, bean));
-
                     System.out.println("Route mapped: [DELETE] " + path + " -> " + method.getName());
                 }
             }

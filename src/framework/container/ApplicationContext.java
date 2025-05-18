@@ -44,7 +44,6 @@ public class ApplicationContext {
                 routes.put(path, method);
             }
         }
-
         return routes;
     }
 
@@ -57,7 +56,6 @@ public class ApplicationContext {
                 routes.put(path, method);
             }
         }
-
         return routes;
     }
 
@@ -70,7 +68,6 @@ public class ApplicationContext {
                 routes.put(path, method);
             }
         }
-
         return routes;
     }
 
@@ -82,7 +79,6 @@ public class ApplicationContext {
                 routes.put(path, method);
             }
         }
-
         return routes;
     }
 
@@ -92,12 +88,9 @@ public class ApplicationContext {
         if (resource == null) {
             throw new ClassNotFoundException("Pacote não encontrado: " + basePackage);
         }
-
         File dir = new File(resource.getFile());
         List<Class<?>> classes = new ArrayList<>();
-
         scanDirectory(basePackage, dir, classes);
-
         return classes;
     }
 
