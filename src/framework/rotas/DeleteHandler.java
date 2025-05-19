@@ -31,19 +31,7 @@ public class DeleteHandler implements HttpHandler {
         }
 
         String query = exchange.getRequestURI().getQuery();
-        Map<String, String> queryParams = parseQueryParams(query);
-        Parameter[] parameters = method.getParameters();
-        Object[] args = new Object[parameters.length];
-        for (int i = 0; i < parameters.length; i++) {
-            Parameter parameter = parameters[i];
-            if (parameter.isAnnotationPresent(RequestParam.class)) {
-                RequestParam rp = parameter.getAnnotation(RequestParam.class);
-                String value = queryParams.get(rp.value());
-                args[i] = Util.validateTypeValue(value, parameter);
-            } else {
-                args[i] = null;
-            }
-        }
+        Object[] args = Util.getValuesArgs(query, method);
 
         Object result = null;
         try {

@@ -1,5 +1,8 @@
 package framework.rotas;
 
+import framework.anotations.parameter.RequestParam;
+
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -33,5 +36,22 @@ public class Util {
         } else {
             return value;
         }
+    }
+
+    public static Object[] getValuesArgs(String query, Method method) {
+        Map<String, String> queryParams = parseQueryParams(query);
+        Parameter[] parameters = method.getParameters();
+        Object[] args = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            if (parameter.isAnnotationPresent(RequestParam.class)) {
+                RequestParam rp = parameter.getAnnotation(RequestParam.class);
+                String value = queryParams.get(rp.value());
+                args[i] = Util.validateTypeValue(value, parameter);
+            } else {
+                args[i] = null;
+            }
+        }
+        return args;
     }
 }
