@@ -1,4 +1,4 @@
-package jpa.metadata;
+package jpa.databasecreators;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

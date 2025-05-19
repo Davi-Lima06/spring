@@ -1,4 +1,4 @@
-package jpa.metadata;
+package jpa.databaseacess;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleEntityManager<T> implements RepositoryBase<T>{
+public class SimpleEntityManager<T> implements RepositoryBase<T> {
 
     private final Class<T> entity = getEntityType();
+    EntityMetadata meta = new EntityMetadata(entity);
 
     public void persist(T entityModel) {
         try {
-            EntityMetadata meta = new EntityMetadata(entityModel.getClass());
             String sql = meta.getInsertSQL();
             PreparedStatement stmt = connection.prepareStatement(sql);
             int index = 1;
@@ -30,10 +30,20 @@ public class SimpleEntityManager<T> implements RepositoryBase<T>{
         }
     }
 
+    public void deleteById(Long id) {
+        try {
+            String sql = meta.getDeleteSql(id);
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.execute();
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<T> listAll() {
         List<T> results = new ArrayList<>();
         try {
-            EntityMetadata meta = new EntityMetadata(entity);
             String sql = meta.getListAllSQL();
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
@@ -43,7 +53,7 @@ public class SimpleEntityManager<T> implements RepositoryBase<T>{
                     String columnName = entry.getKey();
                     Field field = entry.getValue();
                     field.setAccessible(true);
-                    Object value = columnName.equals("ID") ? Long.valueOf((String) resultSet.getObject(columnName))
+                    Object value = columnName.equals(meta.getIdField().getName()) ? Long.valueOf((String) resultSet.getObject(columnName))
                             : resultSet.getObject(columnName);
 
                     field.set(instance, value);
@@ -60,7 +70,6 @@ public class SimpleEntityManager<T> implements RepositoryBase<T>{
     public T findById(Long id) {
         List<T> results = new ArrayList<>();
         try {
-            EntityMetadata meta = new EntityMetadata(entity);
             String sql = meta.getFindByIdSQL(id);
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
@@ -70,7 +79,7 @@ public class SimpleEntityManager<T> implements RepositoryBase<T>{
                     String columnName = entry.getKey();
                     Field field = entry.getValue();
                     field.setAccessible(true);
-                    Object value = columnName.equals("ID") ? Long.valueOf((String) resultSet.getObject(columnName))
+                    Object value = columnName.equals(meta.getIdField().getName()) ? Long.valueOf((String) resultSet.getObject(columnName))
                             : resultSet.getObject(columnName);
                     field.set(instance, value);
                 }

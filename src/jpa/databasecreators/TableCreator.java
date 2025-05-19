@@ -1,4 +1,4 @@
-package jpa.metadata;
+package jpa.databasecreators;
 
 import jpa.anotations.Column;
 import jpa.anotations.Entity;

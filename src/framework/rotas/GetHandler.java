@@ -1,5 +1,6 @@
 package framework.rotas;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import framework.anotations.parameter.RequestParam;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GetHandler implements HttpHandler {
-
+    private final Gson gson = new Gson();
     private final Method method;
     private final Object bean;
 
@@ -31,7 +32,7 @@ public class GetHandler implements HttpHandler {
             return;
         }
         String query = exchange.getRequestURI().getQuery();
-        Map<String, String> queryParams = parseQueryParams(query);
+        Map<String, String> queryParams = Util.parseQueryParams(query);
         Parameter[] parameters = method.getParameters();
         Object[] args = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
@@ -39,15 +40,7 @@ public class GetHandler implements HttpHandler {
             if (parameter.isAnnotationPresent(RequestParam.class)) {
                 RequestParam rp = parameter.getAnnotation(RequestParam.class);
                 String value = queryParams.get(rp.value());
-                if (parameter.getType() == int.class || parameter.getType() == Integer.class) {
-                    args[i] = Integer.parseInt(value);
-                } else if (parameter.getType() == boolean.class || parameter.getType() == Boolean.class) {
-                    args[i] = Boolean.parseBoolean(value);
-                } else if (parameter.getType() == long.class || parameter.getType() == Long.class) {
-                    args[i] = Long.parseLong(value);
-                } else {
-                    args[i] = value;
-                }
+
             } else {
                 args[i] = null;
             }
@@ -59,26 +52,13 @@ public class GetHandler implements HttpHandler {
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        byte[] bytes = result.toString().getBytes();
+        String json = gson.toJson(result);
+        byte[] bytes = json.getBytes();
+
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(200, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
         }
     }
-///cadastrar?nome=joao&idade=20&ativo=true
-    private Map<String, String> parseQueryParams(String query) {
-        Map<String, String> params = new HashMap<>();
-        if (query != null && !query.isEmpty()) {
-            String[] pairs = query.split("&");
-            for (String pair : pairs) {
-                String[] keyValue = pair.split("=");
-                if (keyValue.length == 2) {
-                    params.put(URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8),
-                            URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8));
-                }
-            }
-        }
-        return params;
-    }
-
 }

@@ -4,12 +4,13 @@ import framework.anotations.field.Autowired;
 import framework.anotations.method.DeleteMapping;
 import framework.anotations.method.PostMapping;
 import framework.anotations.method.PutMapping;
+import framework.anotations.parameter.RequestBody;
 import framework.anotations.parameter.RequestParam;
 import framework.anotations.type.Controller;
 import framework.anotations.method.GetMapping;
 import projetoteste.dto.CadastroDTO;
 import projetoteste.entity.Usuario;
-import projetoteste.services.MinhaService;
+import projetoteste.services.UsuarioService;
 
 import java.util.List;
 
@@ -17,21 +18,21 @@ import java.util.List;
 public class HelloController {
 
     @Autowired
-    MinhaService minhaService;
+    UsuarioService usuarioService;
 
     @GetMapping("/list")
-    public List<String> findAll() {
-        return minhaService.listAll();
+    public List<Usuario> findAll() {
+        return usuarioService.listAll();
     }
 
     @PostMapping("/persist")
-    public String persist(String nome) {
-        return minhaService.persist(nome);
+    public String persist(@RequestBody CadastroDTO dto) {
+        return usuarioService.persist(dto);
     }
 
     @GetMapping("/id")
-    public String findById(@RequestParam("id") Long id) {
-        return minhaService.findById(id);
+    public Usuario findById(@RequestParam("id") Long id) {
+        return usuarioService.findById(id);
     }
 
     @PutMapping("/put")
@@ -40,7 +41,7 @@ public class HelloController {
     }
 
     @DeleteMapping("/delete")
-    public String delete(String nome) {
-        return minhaService.doSomething(nome);
+    public String delete(@RequestParam("id") Long id) {
+        return usuarioService.deleteById(id);
     }
 }

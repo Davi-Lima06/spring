@@ -1,4 +1,4 @@
-package jpa.metadata;
+package jpa.databaseacess;
 
 import jpa.anotations.Column;
 import jpa.anotations.Entity;
@@ -53,24 +53,38 @@ public class EntityMetadata {
         return sql.toString();
     }
 
+    public String getDeleteSql(Long id) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("DELETE FROM ")
+                .append(tableName)
+                .append(" WHERE ")
+                .append(idField.getName())
+                .append(" = ")
+                .append(id);
+
+        return sql.toString();
+    }
+
     public String getListAllSQL() {
-        return "SELECT * FROM " + tableName;
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM ")
+                .append(tableName);
+        return  sql.toString();
     }
 
     public String getFindByIdSQL(Long id) throws IllegalAccessException {
-        return "SELECT * FROM " + tableName + " WHERE ID = " + id;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
-    }
-
-    public String getTableName() {
-        return tableName;
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM ")
+                .append(tableName)
+                .append(" WHERE ")
+                .append(idField.getName())
+                .append(" = " )
+                .append(id);
+        return sql.toString();
     }
 
     public Field getIdField() {
-        return idField;
+        return this.idField;
     }
 
     public Map<String, Field> getColumns() {

@@ -2,11 +2,16 @@ package framework.rotas;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import framework.anotations.parameter.RequestParam;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Map;
+
+import static framework.rotas.Util.parseQueryParams;
 
 public class DeleteHandler implements HttpHandler {
 
@@ -24,11 +29,26 @@ public class DeleteHandler implements HttpHandler {
             exchange.sendResponseHeaders(405, -1);
             return;
         }
-        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+
+        String query = exchange.getRequestURI().getQuery();
+        Map<String, String> queryParams = parseQueryParams(query);
+        Parameter[] parameters = method.getParameters();
+        Object[] args = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            if (parameter.isAnnotationPresent(RequestParam.class)) {
+                RequestParam rp = parameter.getAnnotation(RequestParam.class);
+                String value = queryParams.get(rp.value());
+                args[i] = Util.validateTypeValue(value, parameter);
+            } else {
+                args[i] = null;
+            }
+        }
+
         Object result = null;
         try {
-            if (method.getParameterCount() == 1 && method.getParameterTypes()[0].equals(String.class)) {
-                result = method.invoke(bean, requestBody);
+            if (method.getParameterCount() == 1) {
+                result = method.invoke(bean, args);
             } else {
                 result = method.invoke(bean);
             }

@@ -2,10 +2,7 @@ package framework.container;
 
 import com.sun.net.httpserver.HttpServer;
 import framework.anotations.type.Controller;
-import framework.rotas.DeleteHandler;
-import framework.rotas.GetHandler;
-import framework.rotas.PostHandler;
-import framework.rotas.PutHandler;
+import framework.rotas.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,10 +25,10 @@ public class MiniHttpServer {
         for (Object bean : context.getBeans()) {
             Class<?> clazz = bean.getClass();
             if (clazz.isAnnotationPresent(Controller.class)) {
-                Map<String, Method> gets = context.getRouteMappings(bean);
-                Map<String, Method> posts = context.getPostMappings(bean);
-                Map<String, Method> puts = context.getPutMappings(bean);
-                Map<String, Method> deletes = context.getDeleteMappings(bean);
+                Map<String, Method> gets = CreateRoutesUtil.getRouteMappings(bean);
+                Map<String, Method> posts = CreateRoutesUtil.getPostMappings(bean);
+                Map<String, Method> puts = CreateRoutesUtil.getPutMappings(bean);
+                Map<String, Method> deletes = CreateRoutesUtil.getDeleteMappings(bean);
 
                 for (Map.Entry<String, Method> entry : gets.entrySet()) {
                     String path = entry.getKey();

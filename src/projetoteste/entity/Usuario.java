@@ -8,7 +8,7 @@ import jpa.anotations.Id;
 public class Usuario {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "nome")
